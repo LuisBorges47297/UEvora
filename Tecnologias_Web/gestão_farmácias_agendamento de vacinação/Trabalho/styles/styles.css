@@ -1,0 +1,86 @@
+header {
+	background-color: #228B22;
+	color: #228B22;
+	top: 0;
+	padding: 10px 0;
+}
+
+header img {
+	height: 40px;
+}
+
+header nav {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+header a {
+	color: #FFFFFF;
+	text-decoration: none;
+}
+ 
+header .logo {
+	margin: 0 auto 0 0;
+	width: fit-content;
+	padding: 0 2rem;
+}
+
+header nav ul {
+	margin: 0 0 0 auto;
+	width: fit-content;
+	display: flex;
+	align-items: right;
+	gap: 0.5rem;
+	padding: 0 2rem;
+}
+
+li, p, h2, section { padding: 0 1rem;}
+
+header nav ul li {
+	min-width: fit-content;
+	height: fit-content;
+	padding: 0 0.75rem;
+	font-size: medium;
+	list-style: none;
+}
+
+main {
+	margin-left: 4em;
+}
+body {
+	background: url(../public/assets/cruz.png) no-repeat center fixed;
+}
+
+footer {
+    text-align: center;
+    background-color: #228B22;
+    color: #FFFFFF;
+    padding: 10px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+footer a {
+	color: #FFFFFF;
+}
+
+/* ul.nav { 
+	float: center;
+	text-align:center;
+	margin:0; 
+	padding:0;
+	}
+	
+ul.nav li {
+		
+	display:inline;
+	}
+ul.nav li a {
+	
+	text-align:center;
+	padding:0  0.2em 0.2em  0;
+	text-decoration:none;
+	}
+	 */

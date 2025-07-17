@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles/reset.css">
+  <link rel="stylesheet" href="../styles/styles.css">
+  <title>Vacinacao | Farmácias</title>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <h1><a href="index.html" class="logo"><img src="../public/assets/vacina.png" alt="logo" />Vacinação</a></h1>
+      <ul>
+        <li><a href="search.html">Pesquisar</a></li>
+        <li><a href="farmacia.html">Farmacias</a></li>
+        <li><a href="agendar.html">Agendamentos</a></li>
+        <li><a href="manangement.html">Gestao</a></li>
+    </ul>
+    </nav>
+  </header>
+  <main>
+    <h2>Farmácias</h2>
+    <ul>
+      <script> updateData();</script>
+    </ul>
+    <br>
+    
+    <section id="detalhesFarmacia">
+    </section>
+    <br>
+    
+    <div>
+      <ul id="data">
+
+      </ul>
+      <button type="button" onclick="pagAnterior()">anterior</button>
+      <button type="button" onclick="pagSeguinte()">seguinte</button>
+    </div>  
+  </main>
+  <footer>
+    <p>Jailson e Luis </p>
+    <p>Mais informacao, consulte<a href="https://www.farmaciasportuguesas.pt/"> https://www.farmaciasportuguesas.pt</a>
+    </p>
+  </footer>
+</body>
+
+<script>
+  var page = 0;
+  var last_page;
+  updateData();
+
+  function updateData() {
+    const xMLHttpRequest = new XMLHttpRequest();
+    xMLHttpRequest.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        const dados = JSON.parse(this.responseText);
+        
+        if(last_page == null){
+          last_page = dados.last_page;
+        }
+        
+        document.getElementById("detalhesFarmacia").innerHTML =
+          "<em>"
+            + "<h3>"+ dados.farmacias[0].name +"</h3>"
+            + "<p> Entidade:"+ dados.farmacias[0].entity_id +"</p>"
+            + "<p> Codigo Postal/Localidade:"+ dados.farmacias[0].postal_code_locality +"</p>"
+          + "<em>";
+
+        for (let farmacias of dados.farmacias) {
+          document.getElementById("data").innerHTML +=
+            "<li> <details> <summary> "
+            + farmacias.name + "</summary> <p>"
+            + farmacias.entity_id + " - " + farmacias.postal_code_locality
+            + "</p> </details></li>";
+
+        }
+      }
+    };
+
+    xMLHttpRequest.open('POST', 'https://magno.di.uevora.pt/tweb/t1/farmacia/list', true);
+    xMLHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xMLHttpRequest.send("page=" + page);
+  }
+
+  function clear(id) {
+    console.log(id);
+  }
+
+  function pagAnterior() {
+    if (page > 0) {
+      page--;
+      console.log(page);
+      document.getElementById("data").innerHTML = "";
+      updateData();
+    }
+  }
+
+  function pagSeguinte() {
+    if (page < last_page){
+      page++;
+      console.log(page);
+      document.getElementById("data").innerHTML = "";
+      updateData();
+    }
+  }
+
+
+</script>
+
+</html>

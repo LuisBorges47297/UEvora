@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../styles/reset.css">
+        <link rel="stylesheet" href="../styles/styles.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <title>Vacinacao | Farmacias</title>
+    </head>
+
+    <body>
+        <header>
+            <nav>
+            <h1><a href="index.html" class="logo"><img src="../public/assets/vacina.png" alt="logo" />Vacinação</a></h1>
+            <ul>
+                <li><a href="search.html">Pesquisar</a></li>
+                    <li><a href="farmacia.html">Farmacias</a></li>
+                <li><a href="agendar.html">Agendamentos</a></li>
+                <li><a href="manangement.html">Gestao</a></li>
+            </ul>
+            </nav>
+        </header>
+        <main>
+
+            <button onclick="showVaccine()">Vacina</button>
+            <button onclick="showNameCity()">Nome e Cidade</button>
+
+            <form action="https://magno.di.uevora.pt/tweb/t1/farmacia/searchvaccine" method="POST" id="vaccine">
+                <label for="vaccine">Tipo de vacina:</label>
+                <select name="vaccine" id="vaccine">
+                <option value="covid-19">Covid-19</option>
+                <option value="gripe">Gripe</option>
+                </select>
+                <input type="submit" value="Procurar">
+            </form>
+
+            <form action="https://magno.di.uevora.pt/tweb/t1/farmacia/search" method="POST" id="name-city">
+                <label for="name">Nome da farmacia: </label>
+                <input type="text" name="name" id="name" placeholder="Nome da farmacia">
+                <br>
+                <label for="cidade">Cidade: </label>
+                <input type="text" name="cidade" id="cidade" placeholder="cidade">
+                <br>
+                <input type="submit" value="Procurar">
+            </form>
+            
+            <div>
+                <ul id="result">
+
+                </ul>
+            </div>
+
+            <div id="show-more-info">
+
+            </div>
+
+            <form action="https://magno.di.uevora.pt/tweb/t1/schedule/add" method="POST" id="schedule">
+                <label for="user_id">Id do utente</label>
+                <input type="number" name="user_id" id="user_id" placeholder="Id do utente">
+                <label for="schedule_date">Data</label>
+                <input type="date" name="schedule_date" id="schedule_date">
+                <input type="submit" value="Agendar">
+            </form>
+
+            <div id="response">
+
+            </div>
+
+        </main>
+        <footer>
+            <p>Jailson e Luis </p>
+            <p>
+                Mais informacao, consulte<a href="https://www.farmaciasportuguesas.pt/"> https://www.farmaciasportuguesas.pt</a>
+            </p>
+        </footer>
+    </body>
+
+    <script>
+        document.getElementById("vaccine").style.display = "none";
+        document.getElementById("name-city").style.display = "none";
+        document.getElementById("schedule").style.display = "none";
+        var urlActive = "https://magno.di.uevora.pt/tweb/t1/farmacia/searchvaccine";
+        var tagId = "#vaccine";
+        var vaccine = "covid-19";
+        var formData = null;
+        var data = null;
+        $(document).ready(function (){
+            $(tagId).submit(function (event){
+                event.preventDefault();
+                formData = $(this).serialize();
+                vaccine = formData.split("=")[1];
+                $.ajax({
+                    type: "POST",
+                    url: urlActive,
+                    data: formData,
+                    success: function (response){
+                        showData(response);
+                    }
+                })
+            });
+        });
+
+        function showVaccine(){
+            document.getElementById("vaccine").style.display = "block";
+            document.getElementById("name-city").style.display = "none";
+            document.getElementById("result").innerHTML = "";
+            urlActive = "https://magno.di.uevora.pt/tweb/t1/farmacia/searchvaccine";
+            tagId = "#vaccine";
+        }
+
+        function showNameCity(){
+            document.getElementById("vaccine").style.display = "none";
+            document.getElementById("name-city").style.display = "block";
+            document.getElementById("result").innerHTML = "";
+            urlActive = "https://magno.di.uevora.pt/tweb/t1/farmacia/list";
+            tagId = "#name-city";
+        }
+
+     
+
+        function showData(response){
+            data = response;
+
+            document.getElementById("result").innerHTML = "";
+
+            for(let farmacias of data.farmacias){
+                document.getElementById("result").innerHTML +=
+                "<li>" +
+                "<h3>" + farmacias.name + "</h3>" +
+                "<p> Codigo Postal/Localidade:" + farmacias.postal_code_locality + "</p>" +
+                "<button onclick='showMoreInfo("+ farmacias.entity_id +")'>Mais informações</button>"+
+                "</li>";
+                
+                
+            }
+        }
+
+        function showMoreInfo(id){
+            const xMLHttpRequest = new XMLHttpRequest();
+            xMLHttpRequest.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                const dados = JSON.parse(this.responseText);
+                console.log(dados.farmacia.email);
+                document.getElementById("result").innerHTML = "";
+                    document.getElementById("result").innerHTML =
+                        "<h3>" + dados.farmacia.name + "</h3>" +
+                        "<p> Entidade:" + dados.farmacia.entity_id + "</p>" +
+                        "<p> Codigo Postal/Localidade:" + dados.farmacia.postal_code_locality + "</p>" +
+                        "<p> Email:" + dados.farmacia.email + "</p>" +
+                        "<p> Rua:" + dados.farmacia.street_name + "</p>" +
+                        "<p> Telefone:" + dados.farmacia.telephone + "</p>" +
+
+                        "<button onclick='agendar("+ dados.farmacia.entity_id +")'>Agendar</button>"
+            
+            }
+        };
+
+    xMLHttpRequest.open('GET', 'https://magno.di.uevora.pt/tweb/t1/farmacia/get/'+id, true);
+    xMLHttpRequest.send();
+  }
+
+       /*     document.getElementById("result").innerHTML = "";
+
+            for(let farmacias of data.farmacias){
+                if(farmacias.entity_id == id){
+                    document.getElementById("result").innerHTML =
+                    "<h3>" + farmacias.name + "</h3>" +
+                    "<p> Entidade:" + farmacias.entity_id + "</p>" +
+                    "<p> Codigo Postal/Localidade:" + farmacias.postal_code_locality + "</p>" +
+                    "<p> Email:" + farmacias.email + "</p>" +
+                    "<p> Rua:" + farmacias.street_name + "</p>" +
+                    "<p> Telefone:" + farmacias.telephone + "</p>" +
+
+                    "<button onclick='agendar("+ farmacias.entity_id +")'>Agendar</button>"
+                }
+            }
+      */  
+
+        function agendar(id){
+            document.getElementById("schedule").style.display = "block";
+            document.getElementById("schedule").innerHTML += "<input type='hidden' name='entity_id' value='"+ id +"'>"
+            document.getElementById("schedule").innerHTML += "<input type='hidden' name='vaccine' value='"+ vaccine +"'>"
+        }
+
+        document.getElementById("schedule").addEventListener("submit", function (event){
+                event.preventDefault();
+                formData = $(this).serialize();
+                $.ajax({
+                    type: "POST",
+                    url: "https://magno.di.uevora.pt/tweb/t1/schedule/add",
+                    data: formData,
+                    success: function (response){
+                        document.getElementById("response").innerHTML = "<p>Agendado com sucesso com o codigo de agendamento: "+ response.schedule_code +"</p>";
+                    }
+                })
+            });
+
+    </script>
+</html>

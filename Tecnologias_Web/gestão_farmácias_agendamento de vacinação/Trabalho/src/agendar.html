@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../styles/reset.css">
+        <link rel="stylesheet" href="../styles/styles.css">
+        <title>Vacinacao</title>
+    </head>
+    <body>
+        <header>
+            <nav>
+                <h1><a href="index.html" class="logo"><img src="../public/assets/vacina.png" alt="logo"/>Vacinação</a></h1>
+                <ul>
+                    <li><a href="search.html">Pesquisar</a></li>
+                    <li><a href="farmacia.html">Farmácias</a></li>
+                    <li><a href="agendar.html">Agendamentos</a></li>
+                    <li><a href="manangement.html">Gestão</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <h2>Agendamentos: </h2>
+            <form action="https://magno.di.uevora.pt/tweb/t1/schedule/list" method="POST" id="schedule">
+                <label for="user_id">Id do utente</label>
+                <input type="number" name="user_id" id="user_id" placeholder="Id do utente">
+                <input type="submit" value="Pesquisar">
+            </form>
+
+            <div>
+              <ul id="result">
+
+              </ul>
+            </div>
+        </main>
+        <footer>
+            <p>Jailson e Luis </p>
+            <p>Mais informacao, consulte<a href="https://www.farmaciasportuguesas.pt/"> https://www.farmaciasportuguesas.pt</a></p>
+        </footer>
+    </body>
+    <script>
+        var formData = null;
+        var data = null;
+        $(document).getElementById("schedule").addEventListener("submit", function(event){
+            event.preventDefault();
+            formData = new FormData(this);
+            $.ajax({
+                url: "https://magno.di.uevora.pt/tweb/t1/schedule/list",
+                type: "POST",
+                data: formData,
+                success: function(response){
+                    showData(response);
+                }
+            });
+        });
+
+        function updateA(){
+            console.log("updateA");
+            const xMLHttpRequest = new XMLHttpRequest();
+            xMLHttpRequest.onreadystatechange = function (){
+                console.log("onreadystatechange");
+                if(this.readyState == 4 && this.status == 200){
+                    console.log("readyState");
+                    const dados = JSON.parse(this.responseText);
+                    console.log(dados);
+                    showData(dados);
+                }
+            };
+            xMLHttpRequest.open("POST", "https://magno.di.uevora.pt/tweb/t1/schedule/list", true);
+            xMLHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xMLHttpRequest.send("user_id=" + document.getElementById("user_id").value);
+            // xMLHttpRequest.send();
+        }
+      
+
+        function showData(response){
+            data = response;
+
+            document.getElementById("result").innerHTML = "";
+
+            for(let i = 0; i < data.length; i++){
+                document.getElementById("result").innerHTML += 
+                "<li><p>Id: " + data[i].schedule_code + 
+                "</p><p>Vacina: " + data[i].vaccine + 
+                "</p><p>Data: " + data[i].schedule_date + 
+                "</p><button onclick='deleteA("+ data[i].schedule_code +")'>Cancelar</button></li>";
+            }
+        }
+
+        function deleteA(schedule_code){
+            $.ajax({
+                url: "https://magno.di.uevora.pt/tweb/t1/schedule/delete",
+                type: "POST",
+                data: "schedule_code=" + schedule_code,
+                success: function(response){
+                    showData(response);
+                }
+            });
+        }
+
+    </script>
+</html>

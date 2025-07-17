@@ -1,0 +1,24 @@
+time inst | th1                                  | th2                                  | th3                                  | th4                                  
+1         |                                      |                                      | EXECUTING (F0,F1,F2,F3,F4)           |                                      
+2         |                                      |                                      | EXECUTING (F0,F1,F2,F3,F4)           | READY (F0,F1,F2,F3,F4)               
+3         |                                      | SWRDY ()                             | INTERRUPTIBLE (F0,F1,F2,F3,F4)       | READY (F0,F1,F2,F3,F4)               
+4         | SWRDY ()                             | SWRDY ()                             | INTERRUPTIBLE (F0,F1,F2,F3,F4)       | EXECUTING (F0,F1,F2,F3,F4)           
+5         | SWRDY ()                             | SWRDY ()                             | INTERRUPTIBLE (F0,F1,F2,F3,F4)       | EXECUTING (F0,F1,F2,F3,F4)           
+6         | SWRDY ()                             | SWRDY ()                             | INTERRUPTIBLE (F0,F1,F2,F3,F4)       | EXECUTING (F0,F1,F2,F3,F4)           
+7         | SWRDY ()                             | SWRDY ()                             | INTERRUPTIBLE (F0,F1,F2,F3,F4)       | ZOMBIE (F0,F1,F2,F3,F4)              
+8         | SWRDY ()                             | SWRDY ()                             | INTERRUPTIBLE (F0,F1,F2,F3,F4)       | ZOMBIE (F0,F1,F2,F3,F4)              
+9         | SWRDY ()                             | SWRDY ()                             | INTERRUPTIBLE (F0,F1,F2,F3,F4)       |                                      
+10        | READY (F5,F6,F7,F8,F9,F0)            | EXECUTING (F5,F6,F7,F8,F9,F0)        | SWINT (F1,F2,F3,F4)                  |                                      
+11        | READY (F5,F6,F7,F8,F9,F0)            | EXECUTING (F5,F6,F7,F8,F9,F0)        | SWINT (F1,F2,F3,F4)                  |                                      
+12        | READY (F5,F6,F7,F8,F9,F0)            | EXECUTING (F5,F6,F7,F8,F9,F0)        | SWINT (F1,F2,F3,F4)                  |                                      
+13        | READY (F5,F6,F7,F8,F9,F0)            | ZOMBIE (F5,F6,F7,F8,F9,F0)           | SWINT (F1,F2,F3,F4)                  |                                      
+14        | EXECUTING (F5,F6,F7,F8,F9,F0)        | ZOMBIE (F5,F6,F7,F8,F9,F0)           | SWINT (F1,F2,F3,F4)                  |                                      
+15        | EXECUTING (F5,F6,F7,F8,F9,F0)        |                                      | SWRDY (F1,F2,F3,F4)                  |                                      
+16        | EXECUTING (F5,F6,F7,F8,F9,F0)        |                                      | SWRDY (F1,F2,F3,F4)                  |                                      
+17        | ZOMBIE (F5,F6,F7,F8,F9,F0)           |                                      | SWRDY (F1,F2,F3,F4)                  |                                      
+18        | ZOMBIE (F5,F6,F7,F8,F9,F0)           |                                      | SWRDY (F1,F2,F3,F4)                  |                                      
+19        |                                      |                                      | SWRDY (F1,F2,F3,F4)                  |                                      
+20        |                                      |                                      | EXECUTING (F1,F2,F3,F4,F5)           |                                      
+21        |                                      |                                      | EXECUTING (F1,F2,F3,F4,F5)           |                                      
+22        |                                      |                                      | ZOMBIE (F1,F2,F3,F4,F5)              |                                      
+23        |                                      |                                      | ZOMBIE (F1,F2,F3,F4,F5)              |                                      

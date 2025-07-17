@@ -1,0 +1,23 @@
+### Instruções
+
+## 1. Estrutura do programa 
+
+O programa simulador por nós criado está organizado em quatro diretórios 
+
+- bin - diretório onde fica o ficheiro executável. Este ficheiro é gerado quando o programa é compilado.
+- include - diretório onde ficam os ficheiros de cabeçalho do programa.
+- obj - diretório onde ficam os ficheiros binários do programa. Estes ficheiros são gerados quando o programa é compilado.
+- src - diretório onde ficam os ficheiros de implementação do programa.
+
+## 2. Compilação do programa
+
+Para compilar o programa simulador, execute o comando "make" na linha de comando do sistema.
+
+## 3. Execução do programa
+
+Após a compilação do programa simulador, um executável é criado e armazenado do diretório "bin" com o nome "so". Então
+para executa-lo, basta executar o ficheiro de nome so como no exemplo a seguir:
+
+$ ./bin/so
+
+Quando o simulador entra em execução, este executa todos os pseudo-programas (inputs) apresentados no ficheiro input.c pelo professor, e escreve a saída na linha de comando e nos ficheiros de output (output0X.out, sendo X o número do input executado).

@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "fifo_memory.h": "c",
+        "messages.h": "c",
+        "process.c": "cpp",
+        "clock_memory.h": "c",
+        "system.h": "c",
+        "memory_management.h": "c",
+        "inputs.h": "c",
+        "base_memory.h": "c",
+        "array": "c",
+        "functional": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
+    }
+}

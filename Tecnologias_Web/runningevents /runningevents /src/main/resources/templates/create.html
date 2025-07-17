@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="/style/main.css">
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="collaps navbar-collapse" id="navbar">
+            <a href="/" class="navbar-brand">
+                <h3>Eventos</h3>
+            </a>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="/eventos/search" class="nav-link">Pesquisar eventos</a>
+                    <a href="/eventos/show" class="nav-link">Mostrar eventos</a>
+                    <a href="/eventos/registrations" class="nav-link">Fazer inscricoes</a>
+                    <a href="/eventos/time" class="nav-link">Registar o tempo</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<body>
+<h1>Adiciona o seu evento</h1>
+<div class="add">
+    <form action="/eventos/createEvents" method="post">
+        <div class="form-group">
+            <label for="evento">Nome do Evento</label>
+            <input type="text" class="form-control" id="evento" name="evento" placeholder="Nome do evento" required>
+        </div>
+        <div class="form-group">
+            <label for="local">Local:</label>
+            <input type="text" class="form-control" id="local" name="local" placeholder="Local do evento" required>
+        </div>
+        <div class="form-group">
+            <label for="descricao">Descrição do Evento:</label>
+            <textarea name="descricao" id="descricao" class="form-control" placeholder="Descrição do evento" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="genero">Genero:</label>
+            <select name="genero" id="genero" class="form-control" required>
+                <option value="M">Masculino</option>
+                <option value="F">Feminino</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="organizador">Nome do organizador</label>
+            <input type="text" class="form-control" id="organizador" name="organizador" placeholder="Nome do organizador" required>
+        </div>
+        <div class="form-group">
+            <label for="contacto">Contacto do Organizador:</label>
+            <input type="number" class="form-control" id="contacto" name="contacto" placeholder="Contacto do Organizador" required>
+        </div>
+        <div class="form-group">
+            <label for="dataEvento">Data de Evento:</label>-->
+            <input type="date" class="form-control" id="dataEvento" name="data" placeholder="Data do Evento" required>
+        </div>
+        <div class="form-group">
+            <label for="horario">Hora do Evento:</label>
+            <input type="time" class="form-control" id="horario" name="hora" placeholder="Hora do Evento" required>
+        </div>
+        <div class="form-group">
+            <label for="preco">Valor da inscricao:</label>
+            <input type="number" class="form-control" id="preco" name="valor_inscricao" placeholder="Valor da incricao" required>
+        </div>
+        <input type="submit" class="btn btn-primary" value="Adcionar Eventos">
+    </form>
+</div>
+</body>
+
+<footer>
+    <p>Running Events; 2024 | Luis Borges/Jailson Varela </p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,525 @@
+	
+
+	.globl main
+        .data
+cx:     .space 4                         # Allocate cx value
+cy:     .space 4			 # Allocate cy value
+nome:   .space 16			 # guardar o nome da personagem 
+file:   .space 16 			 # Allocate file name
+string1:.string "Nome do novo ficheiro?\n"
+string2:.string "Escolhe uma personagem Yoda, Darth ou Mandalorian\n"
+string3:.string "OS componentes R, G, B\n"
+false:  .string "Impossivel criar/abrir o ficheiro\n"
+true:   .string "Ficheiro criado/aberto\n"
+fout:   .asciz  "C:\\starwars.rgb"        # filename for output
+array:  .space 172800 
+        .text
+        
+#################################################################################################################
+# Funcao: read_rgb_image
+# Descricao: está funcao abre um ficheiro rgb e lê/guarda os caracteres para um array
+# Argumentos:
+	# a0 - o endereco do array
+# Retorna:
+	# a0 - o endreco do array  
+#################################################################################################################
+read_rgb_image: 
+	addi sp, sp, -8
+	sw s5, 0(sp)
+	sw s6, 4(sp)
+	   
+	mv s5, a0         # copy the buffer adress 
+	li   a7, 1024     # system call for open file
+	la   a0, fout     # output file name
+  	li   a1, 0        # Open for reading (flags are 0: read, 1: write)
+  	mv   s6, a0
+  	ecall             # open a file (file descriptor returned in a0)  	
+  	
+  	bltz s6, SAI_1
+  	mv   s6, a0       # save the file descriptor
+  	la a0, true
+  	li a7, 4 
+  	ecall
+  	li   a7, 63       # Read from a file descriptor into a buffer
+  	mv a0, s6
+	mv a1, s5       # Address of the buffer
+	li a2, 172800   # Maximum length to read
+	ecall             # Write to array
+	
+	li a7, 57	  # system call for close file
+	mv a0, s6         # file descriptor to close
+  	ecall             # close file
+	j SAI_1
+	
+SAI_0:	la a0, false
+  	li a7, 4 
+  	ecall
+  	
+SAI_1:
+	lw s5, 0(sp)
+	lw s6, 4(sp)
+	addi sp, sp, -8
+	ret 
+############################################################################################################
+# Funcao: write_rgb_image
+# Descricao: está funcao cria um novo ficheiro rgb 
+# Argumentos:
+	# a0 - o endereco do array
+# Retorna:
+	# a0 - o endreco do array
+#################################################################################################################	
+write_rgb_image: 
+	addi sp, sp, -20
+	sw ra, 0(sp)
+	sw s6, 4(sp)
+	sw s5, 8(sp)
+	sw s4, 12(sp)
+	sw s3, 16(sp)
+	
+	mv s5, a0         # copy the adress of the array
+	
+	li a7, 4          # Prints a string to the console
+	la a0, string1    # Adress of the string
+	ecall
+	
+	la a0, file       # address of input buffer
+	li a1, 20	  # maximum number of characters to read
+	li a7, 8          # Reads a string from the console
+	ecall
+	
+	jal change_caracter
+	
+	la   a0, file     # output file name                          
+  	li   a1, 1        # Open for writing (flags a1: write-only flag creates file if it does not exist)
+  	li a7, 1024	  # Opens a file
+  	ecall             # open a file (file descriptor returned in a0)
+  	
+  	mv s6, a0         # save de file descriptor
+  	
+  	blez s6, SAI_2     # s6 < 0
+  	la a0, true
+  	li a7, 4 
+  	ecall
+  	
+  	li t0, 0          # x
+  	li t1, 0          # y
+  	li t2, 10	  # posicion_X
+  	li t3, 10         # posicion_Y
+  	li t4, 1	  # posicion_x
+  	li t5, 1	  # posicion_y
+  	li t6, 0          # i
+  	li a0, 172800
+  	li a1, 320
+  	li s4, 255
+  	li s3, 10
+  	
+  	la a2, cx      
+  	lw a3, 0(a2)      # cx
+  	la a4, cy      
+  	lw a5, 0(a4)      # cy
+  	
+  FOR:
+    	bge t6, a0, END		# i > 172800
+  	bne t1, a1, IF 	 	# y != 320
+  	addi t0, t0, 1		# x++
+  	li t1, 0		# y = 0
+  	
+  IF: 
+        bne t1, a5, ELSE_IF	# y != cy
+  	add a6, t0, t2          # x + posicion_X        
+  	bne a6, a3, ELSE_IF     # x + posicion_X != cx
+  	blt t2, zero, ELSE_IF	# posicion_X < 0
+  	sw s4, 0(s6)		# 255
+  	sw zero, 1(s6)
+  	sw zero, 2(s6) 
+  	addi t2, t2, -1         # posicion_X--
+  	addi t6, t6, 3		# i += 3
+  	addi s6, s6, 3		# endereco + 3
+  	addi t1, t1, 1          # y++
+  	blt t6, a0, FOR         # i < 172800
+  	j END
+  	
+ELSE_IF:
+	bne t1, a5, ELSE_IF_0	# y != cy
+  	add a6, a3, t2          # cx + posicion_X        
+  	bne a6, t0, ELSE_IF_0   # cx + posicion_X == x
+  	bge t2, s3, ELSE_IF_0	# posX > 10
+  	sw s4, 0(s6)		# 255
+  	sw zero, 1(s6)
+  	sw zero, 2(s6)  
+  	addi t2, t2, 1         # posicion_X++
+  	addi t6, t6, 3		# i += 3
+  	addi s6, s6, 3		# endereco + 3
+  	addi t1, t1, 1          # y++
+  	blt t6, a0, FOR         # i < 172800
+  	j END
+  	
+ELSE_IF_0:
+	bne t0, a3, ELSE_IF_1	# x != cx
+  	add a6, t1, t3          # y + posicion_Y        
+  	bne a6, a5, ELSE_IF_1    # y + posicion_Y != cy
+  	blt t3, zero, ELSE_IF_1	# posY < 0
+  	sw s4, 0(s6)		# 255
+  	sw zero, 1(s6)
+  	sw zero, 2(s6)  
+  	addi t3, t3, -1         # posicion_Y--
+  	addi t6, t6, 3		# i += 3
+  	addi s6, s6, 3		# endereco + 3
+  	addi t1, t1, 1          # y++
+  	blt t6, a0, FOR         # i < 172800
+  	j END
+  	
+ELSE_IF_1: 
+	bne t0, a3, ELSE_IF_2  	# x != cx
+  	add a6, a5, t5          # cy + posicion_y       
+  	bne a6, t1, ELSE_IF_2    # y != cy + posicion_y
+  	bgt t5, s3, ELSE_IF_2	# posicion_y > 10
+ 	sw s4, 0(s6)		# 255
+  	sw zero, 1(s6)
+  	sw zero, 2(s6)  
+  	addi t5, t5, 1         # posicion_y++
+  	addi t6, t6, 3		# i += 3
+  	addi s6, s6, 3		# endereco + 3
+  	addi t1, t1, 1          # y++
+  	blt t6, a0, FOR         # i < 172800
+  	j END
+
+ELSE_IF_2:
+	addi t6, t6, 3          # i+=3
+	addi s6, s6, 3		# endereco + 3
+	addi t1, t1, 1          # y++
+	blt t6, a0, FOR         # i < 172800
+		 	  		 	  	
+ END:
+ 	  # Write to file just opened
+  	li   a7, 64       # system call for write to file
+  	mv   a0, s6       # file descriptor
+ 	la   a1, array    # address of buffer from which to write
+  	li   a2, 172800   # hardcoded buffer length
+  	ecall             # write to file
+  	
+  	  # Close the file
+  	li   a7, 57       # system call for close file
+ 	mv   a0, s6       # file descriptor to close
+  	ecall             # close file
+  	j SAI_3
+  	
+SAI_2:   la a0, false
+  	li a7, 4 
+  	ecall
+  	
+SAI_3:   
+	lw ra, 0(sp)
+	lw s6, 4(sp)
+	lw s5, 8(sp)
+	lw s4, 12(sp)
+	lw s3, 16(sp)
+        addi sp, sp, 20	  
+	ret
+#################################################################################################################
+# Funcao: hue:
+# Descricao: está funcao calcula os componentes RGB
+# Argumentos:
+	# a0 - R
+	# a1 - G
+	# a2 - B
+# Retorna:
+	# a0 - o resultado calculado 
+#################################################################################################################
+hue:
+	mv t0, a0	#R
+	mv t1, a1	#G	
+	mv t2, a2	#B
+  	li a0, 0
+  	
+  	ble t0, t1, A	#R<=G
+  	blt t1, t2, A	#G<B
+  	li t3, 60
+  	sub t1, t1, t2  #G-B
+  	mul t1, t1, t3  #*64
+  	sub t0, t0, t2  #R-G
+  	div a0, t1, t0  			#???????
+	j SAI_4
+	
+     A: blt t1, t0, B1	
+     	ble t0, t2, B1
+     	 li t3, 60
+     	 li t4, 120
+     	sub t0, t0, t1
+     	sub t1, t1, t2
+     	mul t0, t0, t3
+     	div t0, t0, t1
+     	sub a0, t4, t0
+        j SAI_4
+        
+     B1: ble t1, t0, C
+     	blt t2, t0, C
+     	 li t3, 60
+     	sub t2, t2, t0
+     	sub t1, t1, t0
+     	div t0, t2, t1
+     	addi a0, t2, 120
+        j SAI_4
+        
+     C: blt t2, t1, D
+     	ble t1, t0, D
+     	li t3, 240
+     	li t4, 60
+     	sub t1, t1, t0
+     	sub t2, t2, t0
+     	mul t4, t1, t4
+     	div t2, t4, t2
+     	sub a0, t3, t2 
+     	j SAI_4
+     	
+     	
+     D: ble t2, t0, E
+     	blt t0, t1, E
+     	li t3, 60
+     	sub t0, t0, t1
+     	mul t0, t0, t3
+     	sub t2, t2, t1
+     	div t0, t0, t2
+     	addi a0, t0, 240
+     	j SAI_4
+     	
+     	
+     E: blt t0, t2, SAI_4
+     	ble t2, t1, SAI_4
+     	li t3, 60
+     	li t4, 360
+     	sub t2, t2, t1
+     	mul t2, t2, t3
+     	sub t0, t0, t1
+     	div t2, t2, t0
+     	sub a0, t4, t2    	    	
+     	           	      
+SAI_4: 
+	li a7, 1
+	ecall 
+	ret
+#################################################################################################################
+# Funcao: indicator
+# Descricao: está funcao verifica se o pixel pertence ou não a uma determinada personagem 
+# Argumentos:
+	# a0 - R
+	# a1 - G
+	# a2 - B
+	# a3 - endereco do nome da personagem introduzido pelo utilizador
+# Retorna:
+	# a0 - retorna 1 se esse pixel pertence ou 0 se não pertence à personagem 
+#################################################################################################################
+indicator:
+
+	addi sp, sp, -8
+	sw   ra, 0(sp)
+	sw   a3, 4(sp)       # Save the adress of the imput name 
+	
+	jal hue
+	
+	mv t0, a0            # Copy the returned number 
+	li a0, 0
+	
+	lw a3, 4(sp) 
+	lb t1, 0(a3)
+	li t2, 'Y'
+	bne t1, t2, DA
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'O'
+	bne t1, t2, DA
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'D'
+	bne t1, t2, DA
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'A'
+	bne t1, t2, DA
+	li t1, 40
+	li t2, 80
+	blt t0, t1, DA
+	bgt t0, t2, DA
+	li a0, 1
+	j SAI_5
+	
+     DA:lw a3, 4(sp) 
+	lb t1, 0(a3)
+	li t2, 'D'
+	bne t1, t2, MA
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'A'
+	bne t1, t2, MA
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'R'
+	bne t1, t2, MA
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'T'
+	bne t1, t2, MA
+     	addi a3, a3, 1
+	lb t0, 0(a3)
+	li t1, 'H'
+	bne t1, t2, MA
+	li t1, 1
+	li t2, 15	
+	blt t0, t1, MA
+	bge t0, t2, MA
+	li a0, 1
+	j SAI_5
+      
+     MA:lw a3, 4(sp) 
+	lb t1, 0(a3)
+	li t2, 'M'
+	bne t1, t2, SAI_5
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'A'
+	bne t1, t2, SAI_5
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'N'
+	bne t1, t2, SAI_5
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'D'
+	bne t1, t2, SAI_5
+     	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'A'
+	bne t1, t2, SAI_5
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'L'
+	bne t1, t2, SAI_5
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'O'
+	bne t1, t2, SAI_5
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'R'
+	bne t1, t2, SAI_5
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'I'
+	bne t1, t2, SAI_5
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'A'
+	bne t1, t2, SAI_5
+	addi a3, a3, 1
+	lb t1, 0(a3)
+	li t2, 'N'
+	bne t1, t2, SAI_5
+	li t1, 160
+	li t2, 180	
+	blt t0, t1, SAI_5
+	bge t0, t2, SAI_5
+	li a0, 1
+	j SAI_5
+	
+SAI_5:	
+	lw   ra, 0(sp)
+	addi sp, sp, -8
+	ret
+#################################################################################################################
+# Funcao: location
+# Descricao: está funcao calcula as coordenadas cx, e cy do centro de massa
+# Argumentos:
+	# a0 - endereco do nome da personagem introduzido pelo utilizador
+	# a1 - endereco do array de caracteres
+#################################################################################################################
+location:
+	addi , sp , sp -8
+	sw ra, 0(sp)
+	sw s4, 4(sp)
+	
+	mv a3, a0       	# Copy the name adress
+	mv s5, a1      		# Copy the array adress 
+	li s4, 0        	# i
+	li t1, 0		# x
+	li t2, 0		# y
+	li t3, 0		# cx
+	li t4, 0		# cy
+	li t5, 0		# N
+	li s3, 172800   	# Array size
+	li a5, 320      	# width of the image
+    FOR_0:
+    	bge s4, s3, SAI_6	# i > 172800
+		
+    	bne t2, a5, IF_0        # y != 320
+	addi t1, t1, 1		# x++
+	li t2, 0		# y = 0
+	
+    IF_0:
+    	lb a0, 0(s5)		# read the byte of the array position	
+	lb a1, 1(s5)
+	lb a2, 2(s5)
+	
+    	jal indicator
+    	
+	addi s4, s4, 1		# i++
+	addi s5, s5, 3		# adress array + 3
+	addi t2, t2, 1          # y++
+	beq a0, zero, FOR_0	# result = 0
+	addi t5, t5, 1		# N++
+	add t3, t3, t1		# cx + x
+	add t4, t4, t2		# cy + y
+	blt s4, s3, FOR_0	# if i < 172800
+	
+SAI_6:  
+	div a0, t3, t5		# cx/N
+	div a1, t4, t5		# Cy/N
+	la t0, cx               # get the adress of the alocate 
+	la t1, cy
+	sw a0, 0(t0)
+	sw a1, 0(t1)
+	
+	lw s4, 4(sp)
+	lw ra, 0(sp)
+	addi sp, sp, 4
+	ret
+#################################################################################################################
+# Funcao: change_caracter
+# Descricao: está funcao troca o /n por um /0
+# Argumentos:
+	# a0 - endereco do nome introduzido
+# Retorna:
+	# a0 - retorna o endereco do nome  
+#################################################################################################################
+change_caracter:
+	mv t0, a0
+	
+	li t1, '\n'
+   FOR_1:lb t2 , 0(a0)
+   	bne t2, t1, SAI_7
+	sb zero, 0(a0)
+	j SAI_8
+	
+  SAI_7:   
+	addi a0, a0, 1
+	bne t2, zero, FOR_1
+	
+ SAI_8:	mv a0, t0
+ 	ret
+
+#########################################################################################################
+main:
+	
+	
+	
+	la a0, array
+	jal read_rgb_image
+	
+	li a7, 8
+	la a0, nome
+	li a1, 15
+	ecall
+	la a1, array
+	jal location
+	
+	
+	

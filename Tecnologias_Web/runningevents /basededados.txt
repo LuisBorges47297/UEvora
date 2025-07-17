@@ -1,0 +1,36 @@
+create database runningevents 
+
+CREATE TABLE Eventos (
+    nome VARCHAR(50) NOT NULL,
+    local VARCHAR(50) NOT NULL,
+    descricao TEXT NOT NULL,
+    genero CHAR(1) NOT NULL,
+    organizador VARCHAR(20) NOT NULL,
+    contacto INT NOT NULL,
+    data TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
+    horario TIME NOT NULL,
+    valor_inscricao DECIMAL(10,2) NOT NULL,
+    PRIMARY KEY (nome)
+);
+
+CREATE TABLE Inscricao (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    genero CHAR(1) NOT NULL,
+    escalao VARCHAR(10) CHECK (escalao IN ('júnior', 'sénior', 'vet35', 'vet50', 'vet65')) NOT NULL,
+    evento_nome VARCHAR(50) NOT NULL,
+    outros_dados TEXT,
+    data_inscricao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (evento_nome) REFERENCES Eventos(nome)
+);
+
+CREATE TABLE tempos_participantes (
+    nome_evento VARCHAR(50) NOT NULL,
+    local VARCHAR(50) NOT NULL,
+    numero_participante INT NOT NULL,
+    ponto VARCHAR(10) CHECK (ponto IN ('start', 'P1', 'P2', 'P3', 'finish')) NOT NULL,
+    data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (nome_evento) REFERENCES Eventos(nome),
+    FOREIGN KEY (numero_participante) REFERENCES Inscricao(id)
+);
+

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="/style/main.css">
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="collaps navbar-collapse" id="navbar">
+            <a href="/" class="navbar-brand">
+                <h3>Eventos</h3>
+            </a>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="/eventos/show" class="nav-link">Mostrar eventos</a>
+                    <a href="/eventos/create" class="nav-link">Adicionar eventos</a>
+                    <a href="/eventos/registrations" class="nav-link">Fazer inscricoes</a>
+                    <a href="/eventos/time" class="nav-link">Registar o tempo</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<h1>Pesquisa de Eventos</h1>
+
+<div class="search">
+    <form action="/eventos/eventsearch" method="get">
+        <label for="nomeEvento">Nome do Evento:</label>
+        <input type="text" id="nomeEvento" name="nomeEvento" />
+
+        <label for="dataEvento">Data de Realização:</label>-->
+        <input type="date" id="dataEvento" name="data" />-->
+
+        <button type="submit">Pesquisar</button>
+    </form>
+</div>
+
+<div class="search-result">
+    <div th:if="${eventList}">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Localização</th>
+                <th scope="col">Data</th>
+                <th scope="col">...</th>
+            </tr>
+            </thead>
+            <tbody>
+            <div th:if="${eventList.isEmpty()}">
+                <tr>
+                    <td colspan="4">Não foram encontrados resultados</td>
+                </tr>
+            </div>
+            <div th:else>
+                <tr th:each="eventos : ${eventList}">
+                    <td th:text="${eventos.nome}"></td>
+                    <td th:text="${eventos.local}"></td>
+                    <td th:text="${eventos.data}"></td>
+                    <td><a th:href="@{/eventos/{nome}(nome=${eventos.nome})}">Ver mais informacoes</a></td>
+                </tr>
+            </div>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<footer>
+    <p>Running Events; 2024 | Luis Borges/Jailson Varela </p>
+</footer>
+</body>
+</html>

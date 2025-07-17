@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "error.h": "c",
+        "queue.h": "c",
+        "sheduling.h": "c",
+        "task.h": "c",
+        "inputs.h": "c",
+        "stdio.h": "c"
+    }
+}
