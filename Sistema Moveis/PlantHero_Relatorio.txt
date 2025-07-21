@@ -1,0 +1,43 @@
+
+PlantHero – Conheça as plantas como um mestre Pokémon!
+==========================================================
+
+1. Identificação do aluno / grupo
+---------------------------------
+Luis Borges (n.º 47297)
+Curso: Licenciatura em Engenharia Informática
+Unidade Curricular: Sistemas Móveis e Aplicações
+Projeto: PlantHero – Conheça as plantas como um mestre Pokémon!
+
+2. Breve descrição da aplicação
+-------------------------------
+A aplicação PlantHero é um pequeno jogo de perguntas e respostas (quiz) sobre plantas, 
+com um estilo educativo e divertido. O utilizador responde a perguntas ilustradas com imagens, 
+recebe feedback imediato e, no final, vê o seu desempenho com base na pontuação. 
+Ideal para amantes de plantas e jogadores casuais, a aplicação incentiva o conhecimento 
+sobre as plantas.
+
+3. Mapping entre conceitos lecionados e o desenvolvimento
+----------------------------------------------------------
+Conceito                         -> Aplicação prática
+Jetpack Compose                  -> Toda a interface (UI) foi construída com Compose.
+ViewModel                        -> Gestão de estado da pontuação, perguntas e lógica do jogo.
+NavHost + NavController          -> Navegação entre ecrãs: Home, Jogo e Final.
+Reutilização de componentes      -> HomeScreen, PlantGameScreen, FinalScreen como funções @Composable.
+State, remember, mutableStateOf  -> Usados para atualizar a UI dinamicamente com as respostas.
+Boas práticas de UI (Material3)  -> Utilização de Text, Button, Image, Spacer e Column para layout.
+
+4. Obstáculos encontrados
+-------------------------
+- Erro "Activity class does not exist": resolvido ao limpar e reconstruir o projeto.
+- Inicialmente, a aplicação abria mas o ecrã ficava branco: era necessário garantir que o setContent chamava a função principal com navegação corretamente.
+- Problemas ao passar ViewModel para os composables: solucionado ao criar e passar manualmente o GameViewModel.
+- Erro de parâmetro ausente (onRestart): corrigido adicionando o parâmetro à função FinalScreen.
+
+5. Objetivos atingidos
+----------------------
+- Desenvolver uma aplicação educativa, interativa e divertida com Compose.
+- Usar navegação e múltiplos ecrãs.
+- Implementar uma lógica de jogo com pontuação e reinício.
+- Adicionar imagens e elementos visuais ao quiz.
+- Cumprir os principais requisitos da unidade curricular.
